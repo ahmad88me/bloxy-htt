@@ -15,7 +15,7 @@ app = Flask(__name__)
 target_domain = 'https://api.github.com/'
 
 
-@app.route("/<path:theurl>", methods = ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'])
+@app.route("/<path:theurl>", methods=['GET', 'POST', 'PATCH', 'PUT', 'DELETE'])
 def red(theurl):
     try:
         print "request headers: " + str(request.headers)
@@ -33,30 +33,18 @@ def red(theurl):
             print "post_reply: " + str(r.text)
             return r.text
         elif request.method == "PUT":
-            #args = "?"
-            #for k in request.args:
-            #    v = request.args[k][0]
-            #    args += str(k) + "=" + str(v) + "&"
-            #if args[-1] == "&":
-            #    args = args[0:-1]
-            #if args[-1] == "?":
-            #    args = ""
-            # print 'args: '+str(args)
-            get_url = target_domain + theurl # + args
+            get_url = target_domain + theurl  # + args
             print 'put to: ' + get_url
-	    try:
-		print 'put request data: '+request.data
-	    except:
-		print 'put not data'
-	    try:
-		print 'put request json: '+str(request.json)
-	    except:
-		print 'put no json'
-            r = requests.put(get_url, data=request.data, headers=my_headers)
+            print 'put request data: ' + request.data
+            print dict(request.form)
+            data = request.data
+            if request.data == "":
+                print 'put request form: ' + str(dict(request.form).keys()[0])
+                data = str(dict(request.form).keys()[0])
+            r = requests.put(get_url, data=data, headers=my_headers)
             print "put_reply: " + str(r.text)
             return r.text
         elif request.method == "GET":
-            # print 'get to: '+target_domain+theurl
             args = "?"
             for k in request.args:
                 v = request.args[k][0]
@@ -65,14 +53,12 @@ def red(theurl):
                 args = args[0:-1]
             if args[-1] == "?":
                 args = ""
-            # print 'args: '+str(args)
             get_url = target_domain + theurl + args
             print 'get to: ' + str(get_url)
             r = requests.get(get_url, headers=my_headers)
             print "get_reply: " + str(r.text)
             return r.text
         elif request.method == "DELETE":
-            # print 'get to: '+target_domain+theurl
             args = "?"
             for k in request.args:
                 v = request.args[k][0]
@@ -81,7 +67,6 @@ def red(theurl):
                 args = args[0:-1]
             if args[-1] == "?":
                 args = ""
-            # print 'args: '+str(args)
             get_url = target_domain + theurl + args
             print 'delete to: ' + str(get_url)
             r = requests.delete(get_url, headers=my_headers)
@@ -98,4 +83,4 @@ if __name__ == "__main__":
 # use the below instead of
 # app.run(port=5000,ssl_context=context)
 # app.run(port=5000,ssl_context=(cer, pkey))
-    #app.run(port=443,ssl_context=(cer, pkey))
+# app.run(port=443,ssl_context=(cer, pkey))
